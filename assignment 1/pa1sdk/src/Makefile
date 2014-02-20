@@ -1,3 +1,6 @@
+#Nathaniel Thompson 
+#Megan Ritchey
+#Compilers Assignment 1
 PROGRAM = pa1
 CFILES = frontend.c
 YFILE =

@@ -1,3 +1,7 @@
+/*Nathaniel Thompson
+  Megan Ritchey
+  Compilers Assignment 1*/
+
 %{
 
 #include "tokens.h"

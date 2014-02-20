@@ -1,6 +1,10 @@
+/*Nathaniel Thompson
+  Megan Ritchey
+  Compilers Assignment 1*/
 #ifndef _LIGER_TOKENS_H_
 #define _LIGER_TOKENS_H_
 
+//enumeration for tokens
 enum {
       ID = 256,
       NUM,
@@ -52,8 +56,8 @@ enum {
       BADTOKEN,
 };
 
+//extern used with flex
 extern char* yytext;
-
 extern int yylex(void);
 
 #endif
