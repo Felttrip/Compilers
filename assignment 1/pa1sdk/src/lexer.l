@@ -19,8 +19,8 @@
 "]"             			{return RSQUARE;}
 "{"             			{return LCURLY;}
 "}"             			{return RCURLY;}
-"//"            			{return COMMENT;}
-"/*"            			{return LMULTICOMMENT;}
+"//".*$           		    {}
+"/*"            		 	{return LMULTICOMMENT;}
 "*/"            			{return RMULTICOMMENT;}
 "+"             			{return PLUS;}
 "-"             			{return MINUS;}
@@ -53,7 +53,7 @@
 "return"        			{return RETURN;}
 [0-9]+						{return NUM;}
 [A-Za-z][A-Za-z0-9"_"]*     {return ID;}
-"\".*\""                    {return STR;} //fix space
+\"(\\.|[^"])*\"             {return STR;} //fix space
 " "							{}
 "\n"						{}
 . {
