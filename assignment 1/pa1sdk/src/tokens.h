@@ -48,6 +48,8 @@ enum {
       MAIN,
       FUNCTION,
       RETURN,
+      NEWLINE,
+      BADTOKEN,
 };
 
 extern char* yytext;

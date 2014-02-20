@@ -55,11 +55,12 @@
 [A-Za-z][A-Za-z0-9"_"]*     {return ID;}
 \"(\\.|[^"])*\"             {return STR;} //fix space
 " "							{}
-"\n"						{}
+"\n"						{return NEWLINE;}
 . {
       // Here we match any character that wasn't already matched by preceding
       // patterns.
-      fprintf(stderr, "Error: unrecognized character: %s\n", yytext);
+      fprintf(stderr, "Error: unrecognized character: %s", yytext);
+      return BADTOKEN;
 }
 
 %%

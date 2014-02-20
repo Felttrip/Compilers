@@ -1,6 +1,8 @@
 #include "tokens.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #define STACK_MAX 100
 
 extern int yylex(void);
@@ -20,7 +22,7 @@ int Stack_Pop(Stack *s, int d);
 char *toknames[] = {"ID","NUM","STR","VAR","COMMA","PERIOD","COLON","SEMICOLON","LPAREN","RPAREN","LSQUARE",
                     "RSQUARE","LCURLY","RCURLY","PLUS","MINUS","DIVIDE","MOD","MULTIPLY","OR","AND","LESSEQ","GREATEREQ", 
                     "EQEQ","NOTEQ", "LESS","GREATER", "EQ","NOT","IF","COMMENT","LMULTICOMMENT","RMULTICOMMENT","TYPE","INT",
-                    "BOOL","ELSE","FOR","TO","WHILE","NIL","TRU", "FALS","MAIN","FUNCTION","RETURN"};
+                    "BOOL","ELSE","FOR","TO","WHILE","NIL","TRU", "FALS","MAIN","FUNCTION","RETURN","NEWLINE","BADTOKEN"};
 
 int main(int argc, char** argv) 
 {
@@ -29,8 +31,10 @@ int main(int argc, char** argv)
       int numTok = 0;
       int mainFlag = 0;
       int brackFlag = 0;
+      int lineNum = 1;
       Stack *bracketStack = malloc(sizeof(Stack));
       bracketStack->size = 0;
+
       if(argc != 2)
       {
       	printf("Wrong number of files!");
@@ -99,6 +103,45 @@ int main(int argc, char** argv)
                               numTok--;
                               while(RMULTICOMMENT!=yylex()){};
                               break;
+                        }
+                  case NEWLINE:
+                        {
+                              numTok--;
+                              lineNum++;
+                              break;
+                        }
+                  case BADTOKEN:
+                        {
+                              numTok--;
+                              printf(" on line %d\n",lineNum);
+                              break;
+                        }
+                  case ID:
+                        {
+                              if(strlen(yytext)>32)
+                              {
+                                    numTok--;
+                                    printf("ID %s too long, ID not counted\n",yytext);
+                              }
+                              break;
+                        }
+                  case STR:
+                        {
+                              if(strlen(yytext)>255)
+                              {
+                                    numTok--;
+                                    printf("String Literal %s too long, String Literal not counted\n",yytext);
+                              }
+                              break;
+                        }
+                  case NUM:
+                        {
+
+                              if((atoi(yytext)<0)||(atoi(yytext)>(pow(2,32)-1)))
+                              {
+                                     numTok--;
+                                     printf("Error invalid number\n");
+                              }      
                         }
 
             }
