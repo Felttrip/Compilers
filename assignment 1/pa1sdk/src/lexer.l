@@ -51,10 +51,11 @@
 "main"          			{return MAIN;}
 "function"      			{return FUNCTION;}
 "return"        			{return RETURN;}
-[0-9]*						{return NUM;}
+[0-9]+						{return NUM;}
 [A-Za-z][A-Za-z0-9"_"]*     {return ID;}
-"\".*\""                    {return STR;},
-
+"\".*\""                    {return STR;} //fix space
+" "							{}
+"\n"						{}
 . {
       // Here we match any character that wasn't already matched by preceding
       // patterns.
