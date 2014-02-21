@@ -12,13 +12,13 @@
 
 %%
 
-"var" 					            {return VAR;} 
-","							            {return COMMA;}
-"."							            {return PERIOD;}
-":"							            {return COLON;}
-";"							            {return SEMICOLON;}
-"("             			      {return LPAREN;}
-")"             			      {return RPAREN;}
+"var" 					        {return VAR;} 
+","							    {return COMMA;}
+"."							    {return PERIOD;}
+":"							    {return COLON;}
+";"							    {return SEMICOLON;}
+"("             			    {return LPAREN;}
+")"             			    {return RPAREN;}
 "["                   			{return LSQUARE;}
 "]"                   			{return RSQUARE;}
 "{"             	      		{return LCURLY;}
@@ -34,11 +34,11 @@
 "|"                   			{return OR;}
 "&"                   			{return AND;}
 "<="                  			{return LESSEQ;}
-">="            			      {return GREATEREQ;}
+">="            			    {return GREATEREQ;}
 "=="                  			{return EQEQ;}
 "!="                  			{return NOTEQ;}
 "<"             	      		{return LESS;}
-">"                  		 		{return GREATER;}
+">"                  		 	{return GREATER;}
 "="             	      		{return EQ;}
 "!"                   			{return NOT;}
 "if"                  			{return IF;}
@@ -51,15 +51,15 @@
 "while"                			{return WHILE;}
 "nil"                 			{return NIL;}
 "true"                 			{return TRU;}
-"false"          			      {return FALS;}
-"main"          			      {return MAIN;}
-"function"      			      {return FUNCTION;}
-"return"        			      {return RETURN;}
-[0-9]+						          {return NUM;}
-[A-Za-z][A-Za-z0-9"_"]*     {return ID;}
-\"(\\.|[^"])*\"             {return STR;} //fix space
-" "						            	{}
-"\n"					            	{return NEWLINE;}
+"false"          			    {return FALS;}
+"main"          			    {return MAIN;}
+"function"      			    {return FUNCTION;}
+"return"        			    {return RETURN;}
+[0-9]+						    {return NUM;}
+[A-Za-z][A-Za-z0-9"_"]*         {return ID;}
+\"(\\.|[^"])*\"                 {return STR;}
+" "						        {}
+"\n"					        {return NEWLINE;}
 . {
       // Here we match any character that wasn't already matched by preceding
       // patterns.
