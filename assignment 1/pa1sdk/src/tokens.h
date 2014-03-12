@@ -28,17 +28,17 @@ enum {
       OR, //|
       AND, //&
       LESSEQ, //<=
-	GREATEREQ, //>=
-	EQEQ, //==
-	NOTEQ, //!=
-	LESS, //<
+      GREATEREQ, //>=
+      EQEQ, //==
+      NOTEQ, //!=
+      LESS, //<
       GREATER, //>
-	EQ, //=
-	NOT, //!
+      EQ, //=
+      NOT, //!
       IF,
       COMMENT,
       LMULTICOMMENT,
-	RMULTICOMMENT,
+      RMULTICOMMENT,
       TYPE,
       INT,
       BOOL,
