@@ -26,7 +26,7 @@
 "//".*$ 		{}
 "/*"			{return LMULTICOMMENT;}
 "*/"			{return RMULTICOMMENT;}
-"+"			{return PLUS;}
+"+"			{return printf("%s",yytext);}
 "-"			{return MINUS;}
 "/"			{return DIVIDE;}
 "%"			{return MOD;}
