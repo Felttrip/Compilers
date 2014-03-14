@@ -19,24 +19,33 @@ int main(int argc, char** argv) {
    printf("file unreadable");
    return 0;
  }
- yylval.bool_val = -1;
+ //value returned by yyparse
+ int returnval;
+ //the type of the value 0 for numeric 1 for boolean 2 for undefined
+ int type;
  //yyparse() returns 0 if successfull
- if(yyparse())
+ if(yyparse(&returnval,&type))
  {
  	printf("Genuine Liger: no\n");
  }
  else
  {
- 	printf("Genuine Liger: yes\n");
- 	if (yylval.bool_val == -1)
+ 	printf("\nGenuine Liger: yes\n");
+ 	if(type == 2)
  	{
- 		printf("Results: %d\n",yylval.val);
+ 		printf("Undefined");
+
+ 	}
+ 	else if (returnval == TRUE || returnval == FALSE)
+ 	{
+ 		printf("Results: %s\n",returnval==TRUE?"True":"False");
+ 		
  	}
  	else
  	{
- 		printf("Results: %s\n",yylval.bool_val==TRUE?"True":"False");
+ 		printf("Results: %d\n",returnval);
  	}
- 	
+	
  }
 return 0;
 }
