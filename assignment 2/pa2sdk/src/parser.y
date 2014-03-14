@@ -74,6 +74,7 @@ num_exp:
      |ID                     
      |'(' exp ')'            {$$ = $2;}
 
+
 bool_exp:
      num_exp LT_EQ num_exp   {$$ = $1 <= $3 ? TRUE : FALSE ;}
      |num_exp GT_EQ num_exp  {$$ = $1 >= $3 ? TRUE : FALSE ;}
@@ -83,8 +84,11 @@ bool_exp:
      |num_exp '<' num_exp    {$$ = $1 < $3 ? TRUE : FALSE ;}
      |bool_exp '&' bool_exp  {$$ = ($1 == TRUE) && ($3 == TRUE) ? TRUE : FALSE ;}
      |bool_exp '|' bool_exp  {$$ = ($1 == TRUE) || ($3 == TRUE) ? TRUE : FALSE ;}
+     
 
-
+struct: 
+     '{' ID '=' NUM '}'
+     |struct.ID
 
 
 %%
