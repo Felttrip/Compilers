@@ -32,15 +32,18 @@ static void yyerror(const char*);
 // The type of yylval.
 %union {
       int val;
+      int bool_val;
 };
 
-%left UPLUS UMINUS '!'
-%left '*' '/' '%'
-%left '+' '-'
-%left '>' '<' LT_EQ GT_EQ
-%left GR_EQ NOT_EQ
-%left '&'
+%type <val> NUM exp bool_exp num_exp
+
 %left '|'
+%left '&'
+%left GR_EQ NOT_EQ
+%left '>' '<' LT_EQ GT_EQ
+%left '+' '-'
+%left '*' '/' '%'
+%left UPLUS UMINUS '!'
 // The top-level rule.
 %start program
 
@@ -50,34 +53,42 @@ static void yyerror(const char*);
 // program -- an EVAL token followed by a Liger expression.
 program: 
       decls
-      | EVAL '(' full_exp ')' ';'
+      | EVAL '(' exp ')' ';'      
 
 decls:
      VAR ID ':' NUM ';' 
 
-full_exp: 
-     exp rel_op exp {printf("\n");}
 
 //uminus uplus
 exp: 
-     exp '+' exp 
-     |exp '-' exp
-     |exp '*' exp
-     |exp '/' exp 
-     |exp '%' exp 
-     |'('exp')'   
-     |NUM
-     |ID                                                                 
+     num_exp     {yylval.val = $1;}
+     |bool_exp   {yylval.bool_val = $1;}
+     
+num_exp:
+     num_exp '+' num_exp     {$$ = $1 + $3;}
+     |num_exp '-' num_exp    {$$ = $1 - $3;}
+     |num_exp '*' num_exp    {$$ = $1 * $3;}
+     |num_exp '/' num_exp    {$$ = $1 / $3;}
+     |num_exp '%' num_exp    {$$ = $1 % $3;}
+     |NUM                    {$$ = yylval.val;}
+     |ID                     
+     |'(' exp ')'            {$$ = $2;}
 
-rel_op: 
-       LT_EQ
-       |GT_EQ
-       |EQ
-       |NOT_EQ
-       |'<'
-       |'>'
+bool_exp:
+     num_exp LT_EQ num_exp   {$$ = $1 <= $3 ? TRUE : FALSE ;}
+     |num_exp GT_EQ num_exp  {$$ = $1 >= $3 ? TRUE : FALSE ;}
+     |num_exp EQ num_exp     {$$ = $1 == $3 ? TRUE : FALSE ;}
+     |num_exp NOT_EQ num_exp {$$ = $1 != $3 ? TRUE : FALSE ;}
+     |num_exp '>' num_exp    {$$ = $1 > $3 ? TRUE : FALSE ;}
+     |num_exp '<' num_exp    {$$ = $1 < $3 ? TRUE : FALSE ;}
+     |bool_exp '&' bool_exp  {$$ = ($1 == TRUE) && ($3 == TRUE) ? TRUE : FALSE ;}
+     |bool_exp '|' bool_exp  {$$ = ($1 == TRUE) || ($3 == TRUE) ? TRUE : FALSE ;}
+
+
+
 
 %%
+
 
 void yyerror(const char* p) {
       fprintf(stderr, "%s\n", p);

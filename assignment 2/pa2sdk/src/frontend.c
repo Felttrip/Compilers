@@ -1,5 +1,6 @@
 #include "lexer.h" // yyin, yylex, etc.
-#include "parser.h" // yyparse, yylval, token enum, etc.
+#include "parser.h" // yyparse, yylval, token enum, etc
+#include <string.h>
 
 int main(int argc, char** argv) {
  //Check for correct number of files    
@@ -18,6 +19,24 @@ int main(int argc, char** argv) {
    printf("file unreadable");
    return 0;
  }
- yyparse();
+ yylval.bool_val = -1;
+ //yyparse() returns 0 if successfull
+ if(yyparse())
+ {
+ 	printf("Genuine Liger: no\n");
+ }
+ else
+ {
+ 	printf("Genuine Liger: yes\n");
+ 	if (yylval.bool_val == -1)
+ 	{
+ 		printf("Results: %d\n",yylval.val);
+ 	}
+ 	else
+ 	{
+ 		printf("Results: %s\n",yylval.bool_val==TRUE?"True":"False");
+ 	}
+ 	
+ }
 return 0;
 }

@@ -53,7 +53,7 @@ SHORT_TOK         {SHORT_COMP_OP}|{ARITH_OP}|{BOOL_OP}|{ASSIGN}|{PUNCTUATION}
       return *yytext;
 }
 
-{DIGIT}+    { return NUM; }
+{DIGIT}+    { yylval.val = atoi( yytext ); return NUM; }
 
 \"(\\\"|\\\\|[^"\r\n\\])*\" { return STR; }
 
