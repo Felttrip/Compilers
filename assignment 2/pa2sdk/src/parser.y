@@ -61,13 +61,24 @@ program:
       | EVAL '(' exp ')' ';' {*returnval = $3;}     
 
 decls:
-     VAR ID ':' NUM ';' 
+     decls1 '=' NUM ';'
+
+decls1:
+      VAR ID ':' typeof
+
+typeof:
+      INT 
+      |BOOL
+       
+funct:  
+      FUNCTION VAR '(' decls1 ')' decls1 '{'
 
 
 //uminus uplus
 exp: 
      num_exp     {*type = 0;}
      |bool_exp   {*type = 1;}
+     |struct     {*type = 2;}
      
 num_exp:
      num_exp '+' num_exp     {$$ = $1 + $3;}
@@ -89,6 +100,11 @@ bool_exp:
      |num_exp '<' num_exp    {$$ = $1 < $3 ? TRUE : FALSE ;}
      |bool_exp '&' bool_exp  {$$ = ($1 == TRUE) && ($3 == TRUE) ? TRUE : FALSE ;}
      |bool_exp '|' bool_exp  {$$ = ($1 == TRUE) || ($3 == TRUE) ? TRUE : FALSE ;}
+struct: 
+      '{' ID '=' NUM '}'
+      |struct
+
+
 
 
 %%

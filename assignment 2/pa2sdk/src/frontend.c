@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
  //value returned by yyparse
  int returnval;
  //the type of the value 0 for numeric 1 for boolean 2 for undefined
- int type;
+ int type = -1;
  //yyparse() returns 0 if successfull
  if(yyparse(&returnval,&type))
  {
@@ -30,21 +30,22 @@ int main(int argc, char** argv) {
  }
  else
  {
- 	printf("\nGenuine Liger: yes\n");
+ 	printf("Genuine Liger: yes\n");
  	if(type == 2)
  	{
- 		printf("Undefined");
+ 		printf("Results: Undefined\n");
 
  	}
- 	else if (returnval == TRUE || returnval == FALSE)
+ 	else if ((type == 1)&&(returnval == TRUE || returnval == FALSE))
  	{
  		printf("Results: %s\n",returnval==TRUE?"True":"False");
  		
  	}
- 	else
+ 	else if (type == 0)
  	{
  		printf("Results: %d\n",returnval);
  	}
+
 	
  }
 return 0;
