@@ -1,1 +1,1 @@
-var x : int = 5;
+eval(5/0);

@@ -10,6 +10,15 @@
 extern int yylex(void);
 static void yyerror( int *returnval, int *type, const char* p);
 extern char* undef;
+
+void setResult(int set, int *curr)
+{
+   if(set > *curr)
+   {
+      *curr = set;
+   }
+   return;
+}
 %}
 
 // These get stuck in a token enum in the header bison generates (parser.h),
@@ -40,7 +49,7 @@ extern char* undef;
 
 
 //Type
-%type <val> NUM num_exp exp bool_exp 
+%type <val> NUM INT
 
 %left '|'
 %left '&'
@@ -58,55 +67,91 @@ extern char* undef;
 // program -- an EVAL token followed by a Liger expression.
 program: 
       decls
-      | EVAL '(' exp ')' ';' {*returnval = $3;}     
+      | EVAL '(' exp ')' ';'
 
 decls:
-     decls1 '=' NUM ';'
-
-decls1:
-      VAR ID ':' typeof
-
-typeof:
-      INT 
-      |BOOL
+       VAR ID ':' exp ';'
+       |TYPE ID ':' exp ';'
        
-funct:  
-      FUNCTION VAR '(' decls1 ')' decls1 '{'
+decls1:
+        ID ':' INT decls2
+decls2:
+        ',' decls1
+        |
 
 
 //uminus uplus
 exp: 
-     num_exp     {*type = 0;}
-     |bool_exp   {*type = 1;}
-     |struct     {*type = 2;}
+     lValue
+     |INT
+     |ID
+     |NUM
+     |NIL
+     |STR
+     |FUNCTION ID '(' arglist ')'
+     |exp biOp exp
+     |unOp exp
+     |ID '{' fieldExpList '}'
+     |'[' exp ']'
+     |'[' arglist ']'
+     |'{' decls1 '}'
+     |'{' fieldExpList '}'
+     |'(' expList ')'
+     |lValue '=' exp
+     |IF '(' exp ')' '{' exp '}' 
+     |IF '(' exp ')' '{' exp '}' ELSE '{' exp '}'
+     |WHILE '(' exp ')' '{' exp '}'
+     |FOR '(' exp TO exp')' '{' exp '}'
+
+lValue:
+      ID
+      |lValue '.' ID
+      |lValue '[' exp ']'
+
+arglist:
+      exp arglist1
+      |
+arglist1:
+      ',' exp arglist1
+      |
+
+biOp:
+      '+'
+      |'-'
+      |'*'
+      |'/'
+      |'%'
+      |LT_EQ
+      |GT_EQ
+      |EQ
+      |NOT_EQ
+      |'>'
+      |'<'
+      |'&'
+      |'|'
+
+unOp:
+      '!'
+      |'-'
+      |'+'
+
+fieldExpList:
+      ID '=' exp fieldExpList1
+      |
+
+fieldExpList1:
+      ',' ID '=' exp fieldExpList1
+      |
+
+expList:
+      exp expList1
+      |
+
+expList1:
+      ';' expList1
+      |
+
      
-num_exp:
-     num_exp '+' num_exp     {$$ = $1 + $3;}
-     |num_exp '-' num_exp    {$$ = $1 - $3;}
-     |num_exp '*' num_exp    {$$ = $1 * $3;}
-     |num_exp '/' num_exp    {$$ = $1 / $3;}
-     |num_exp '%' num_exp    {$$ = $1 % $3;}
-     |NUM                    {$$ = yylval.val;}
-     |ID                     
-     |'(' exp ')'            {$$ = $2;}
-
-
-bool_exp:
-     num_exp LT_EQ num_exp   {$$ = $1 <= $3 ? TRUE : FALSE ;}
-     |num_exp GT_EQ num_exp  {$$ = $1 >= $3 ? TRUE : FALSE ;}
-     |num_exp EQ num_exp     {$$ = $1 == $3 ? TRUE : FALSE ;}
-     |num_exp NOT_EQ num_exp {$$ = $1 != $3 ? TRUE : FALSE ;}
-     |num_exp '>' num_exp    {$$ = $1 > $3 ? TRUE : FALSE ;}
-     |num_exp '<' num_exp    {$$ = $1 < $3 ? TRUE : FALSE ;}
-     |bool_exp '&' bool_exp  {$$ = ($1 == TRUE) && ($3 == TRUE) ? TRUE : FALSE ;}
-     |bool_exp '|' bool_exp  {$$ = ($1 == TRUE) || ($3 == TRUE) ? TRUE : FALSE ;}
-struct: 
-      '{' ID '=' NUM '}'
-      |struct
-
-
-
-
 %%
 
 
