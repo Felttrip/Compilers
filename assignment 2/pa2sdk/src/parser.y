@@ -89,7 +89,7 @@ exp:
      |NIL
      |STR
      |FUNCTION ID '(' arglist ')'
-     |exp biOp exp
+     |exp biOp exp  
      |unOp exp
      |ID '{' fieldExpList '}'
      |'[' exp ']'
@@ -157,5 +157,10 @@ expList1:
 
 void yyerror( int *returnval, int *type, const char* p) {
       fprintf(stderr, "%s\n", p);
+}
+
+int evaluate(int left, int right, char op)
+{
+  
 }
 
