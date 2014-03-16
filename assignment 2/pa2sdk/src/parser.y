@@ -13,7 +13,7 @@ extern char* undef;
 
 
 %}
-%expect 29
+%expect 69
 // These get stuck in a token enum in the header bison generates (parser.h),
 // which we can then include in our lexer spec.
 %token VAR TYPE FUNCTION
@@ -64,9 +64,10 @@ program:
 
 
 decls:
-       VAR ID ':' exp ';'
-       |TYPE ID ':' exp ';'
+       VAR ID ':' exp ';' decls
+       |TYPE ID ':' exp ';' decls
        |decls func 
+       |
 
 decls1:
         ID ':' exp decls2
@@ -89,8 +90,10 @@ exp:
      |NUM
      |NIL
      |STR
+     |TRUE
+     |FALSE
      |func
-     |exp biOp exp  
+     |func1 
      |unOp exp
      |ID '{' fieldExpList '}'
      |'[' exp ']'
@@ -98,8 +101,21 @@ exp:
      |'{' decls1 '}'
      |'{' fieldExpList '}'
      |'(' expList ')'
-     |func1
      |RETURN exp ';'
+     |exp '+' exp    {$$ = $1 + $2;}
+     |exp '-' exp    {$$ = $1 - $2;}
+     |exp '*' exp    {$$ = $1 * $2;}
+     |exp '/' exp    {$$ = $1 / $2;}
+     |exp '%' exp    {$$ = $1 % $2;}
+     |exp LT_EQ exp  {$$ = $1 + $2;}
+     |exp GT_EQ exp  {$$ = $1 + $2;}
+     |exp EQ exp     {$$ = $1 + $2;}
+     |exp NOT_EQ exp {$$ = $1 + $2;}
+     |exp '=' exp    {$$ = $1 + $2;}
+     |exp '>' exp    {$$ = $1 + $2;}
+     |exp '<' exp    {$$ = $1 + $2;}
+     |exp '&' exp    {$$ = $1 + $2;}
+     |exp '|' exp    {$$ = $1 + $2;}
      /*|lValue '=' exp
      |IF '(' exp ')' '{' exp '}' 
      |IF '(' exp ')' '{' exp '}' ELSE '{' exp '}'
@@ -118,21 +134,13 @@ arglist1:
       ',' exp arglist1
       |
 
-biOp:
-      '+'
-      |'-'
-      |'*'
-      |'/'
-      |'%'
-      |LT_EQ
-      |GT_EQ
-      |EQ
-      |NOT_EQ
-      |'='
-      |'>'
-      |'<'
-      |'&'
-      |'|'
+expList:
+      exp expList1
+      |
+
+expList1:
+      ';' expList1
+      |
 
 unOp:
       '!'
@@ -147,13 +155,6 @@ fieldExpList1:
       ',' ID '=' exp fieldExpList1
       |
 
-expList:
-      exp expList1
-      |
-
-expList1:
-      ';' expList1
-      |
 
      
 %%
