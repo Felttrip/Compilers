@@ -11,16 +11,9 @@ extern int yylex(void);
 static void yyerror( int *returnval, int *type, const char* p);
 extern char* undef;
 
-void setResult(int set, int *curr)
-{
-   if(set > *curr)
-   {
-      *curr = set;
-   }
-   return;
-}
-%}
 
+%}
+%expect 29
 // These get stuck in a token enum in the header bison generates (parser.h),
 // which we can then include in our lexer spec.
 %token VAR TYPE FUNCTION
@@ -69,26 +62,34 @@ program:
       decls
       | EVAL '(' exp ')' ';'
 
+
 decls:
        VAR ID ':' exp ';'
        |TYPE ID ':' exp ';'
-       
+       |decls func 
+
 decls1:
-        ID ':' INT decls2
+        ID ':' exp decls2
 decls2:
         ',' decls1
         |
 
-
-//uminus uplus
+func:
+      FUNCTION ID '(' decls1 ')' ':' INT '{' exp '}'
+      |FUNCTION ID '(' decls1 ')' '{' exp '}'
+      |FUNCTION ID '(' ')' '{' exp '}'
+      |FUNCTION ID '(' ')' '{' '}'
+func1:
+     ID '(' exp ')'
+     |ID '(' ')'
 exp: 
-     lValue
-     |INT
+     //lValue
+     INT
      |ID
      |NUM
      |NIL
      |STR
-     |FUNCTION ID '(' arglist ')'
+     |func
      |exp biOp exp  
      |unOp exp
      |ID '{' fieldExpList '}'
@@ -97,16 +98,18 @@ exp:
      |'{' decls1 '}'
      |'{' fieldExpList '}'
      |'(' expList ')'
-     |lValue '=' exp
+     |func1
+     |RETURN exp ';'
+     /*|lValue '=' exp
      |IF '(' exp ')' '{' exp '}' 
      |IF '(' exp ')' '{' exp '}' ELSE '{' exp '}'
      |WHILE '(' exp ')' '{' exp '}'
-     |FOR '(' exp TO exp')' '{' exp '}'
+     |FOR '(' exp TO exp')' '{' exp '}'*/
 
-lValue:
+/*lValue:
       ID
       |lValue '.' ID
-      |lValue '[' exp ']'
+      |lValue '[' exp ']'*/
 
 arglist:
       exp arglist1
@@ -125,6 +128,7 @@ biOp:
       |GT_EQ
       |EQ
       |NOT_EQ
+      |'='
       |'>'
       |'<'
       |'&'
@@ -157,10 +161,5 @@ expList1:
 
 void yyerror( int *returnval, int *type, const char* p) {
       fprintf(stderr, "%s\n", p);
-}
-
-int evaluate(int left, int right, char op)
-{
-  
 }
 
