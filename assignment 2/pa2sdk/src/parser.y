@@ -89,7 +89,11 @@ returnType:
 statement:
       exp ';'
       |RETURN returning ';' 
-      |assignment
+      |assignment ';'
+
+returning:
+      '(' exp ')' 
+      |      
 
 statementList:
       statementList1
@@ -114,17 +118,11 @@ type:
       INT
       |BOOL
       |'[' type ']'
+      |ID
       //fill in more possible stuct
 
 callingFunc:
-      ID callingFuncMiddle
-
-callingFuncMiddle:
-      '(' paramList ')' callingFuncEnd
-
-callingFuncEnd:
-      ';'
-      |
+      ID '(' paramList ')'
 
 paramList:
       paramList1
@@ -141,37 +139,32 @@ localDecls:
 
 localDecls1:
       localDec
-      |localDecls1 ";" localDec
+      |localDecls1 localDec
 
 localDec:
-      VAR localDecMiddle 
-      |TYPE localDecMiddle
-      | 
+      VAR ID ':' type decEnd';'
 
-localDecMiddle:
-      ID ':' exp ';'
+decEnd:
+      '=' exp
+      |
 
 assignment:
-      ID '=' exp ';'
+      ID '=' exp
 
-returning:
-      '(' exp ')' 
-      |
 
 exp: 
      //lValue
      INT
      |ID
-     |NUM      //{$$ = yylval.val;}
+     |NUM           //{$$ = yylval.val;}
      |NIL
      |STR
-     |TRUE     //{$$ = TRUE}
-     |FALSE    //{$$ = FALSE}
+     |TRUE          //{$$ = TRUE}
+     |FALSE         //{$$ = FALSE}
      |callingFunc
      |'+' exp
      |'-' exp
      |'!' exp  
-     |exp '=' exp
      |exp '+' exp    //{$$ = $1 + $2;}
      |exp '-' exp    //{$$ = $1 - $2;}
      |exp '*' exp    //{$$ = $1 * $2;}
