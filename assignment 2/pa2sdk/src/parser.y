@@ -83,11 +83,13 @@ func:
       FUNCTION ID '(' funcArgList ')' returnType '{' localDecls statementList '}'
 
 returnType:
-        ':' type 
-        |
+      ':' type 
+      |
 
 statement:
-      |RETURN returning';' 
+      exp ';'
+      |RETURN returning ';' 
+      |assignment
 
 statementList:
       statementList1
@@ -125,11 +127,13 @@ callingFuncEnd:
       |
 
 paramList:
-      exp paramList1
+      paramList1
+      |
 
 paramList1:
-      ',' paramList
-      |
+      exp
+      |paramList1 ',' exp
+
 
 localDecls:
       localDecls1
@@ -140,15 +144,19 @@ localDecls1:
       |localDecls1 ";" localDec
 
 localDec:
-       VAR localDecMiddle 
-       |TYPE localDecMiddle
-       | 
+      VAR localDecMiddle 
+      |TYPE localDecMiddle
+      | 
 
 localDecMiddle:
       ID ':' exp ';'
 
 assignment:
       ID '=' exp ';'
+
+returning:
+      '(' exp ')' 
+      |
 
 exp: 
      //lValue
@@ -159,18 +167,10 @@ exp:
      |STR
      |TRUE     //{$$ = TRUE}
      |FALSE    //{$$ = FALSE}
-     |func
      |callingFunc
      |'+' exp
      |'-' exp
-     |'!' exp
-     |assignment
-     //|ID '{' fieldExpList '}'
-     |'[' exp ']'
-     //|'[' arglist ']'
-     //|'{' decls1 '}'
-     |'{' fieldExpList '}'
-     |'(' expList ')'    
+     |'!' exp  
      |exp '=' exp
      |exp '+' exp    //{$$ = $1 + $2;}
      |exp '-' exp    //{$$ = $1 - $2;}
@@ -185,38 +185,12 @@ exp:
      |exp '<' exp    //{$$ = $1 < $3 ? TRUE : FALSE ;}
      |exp '&' exp    //{$$ = ($1 == TRUE) && ($3 == TRUE) ? TRUE : FALSE ;}
      |exp '|' exp    //{$$ = ($1 == TRUE) || ($3 == TRUE) ? TRUE : FALSE ;}
-     /*|lValue '=' exp
-     |IF '(' exp ')' '{' exp '}' 
-     |IF '(' exp ')' '{' exp '}' ELSE '{' exp '}'
-     |WHILE '(' exp ')' '{' exp '}'
-     |FOR '(' exp TO exp')' '{' exp '}'*/
-
-
-returning:
-      '(' exp ')' 
-      |
 
 /*lValue:
       ID
       |lValue '.' ID
       |lValue '[' exp ']'*/
-
-
-
-expList:
-      exp expList1 
-
-expList1:
-      ';' expList1
-      |
-
-fieldExpList:
-      ID ':' exp fieldExpList1
-
-fieldExpList1:
-      ',' fieldExpList
-      |
-
+ 
 
      
 %%
