@@ -142,6 +142,7 @@ lStructLookUp:
       |structureLiteral
       |arraySubscript
       |structFieldLookUp
+      |ID
 
 funcArgList:
       funcArgList1
@@ -213,6 +214,9 @@ exp:
      |FALSE         //{$$ = FALSE}
      |callingFunc
      |structureLiteral
+     |structFieldLookUp
+     |arraySubscript
+     |commaSepArray
      |'(' exp ')'
      |'+' exp %prec UPLUS
      |'-' exp %prec UMINUS
