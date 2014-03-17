@@ -1,10 +1,10 @@
 var x : {a : int, b : int} ;
 
 function main (argv : [[int]]) : int {
-      /*var x : int;
+      var x : int;
       var y : int;
 
-      if (x > y | y <= x) {
+      /*if (x > y | y <= x) {
             return (3);
       }*/
 
