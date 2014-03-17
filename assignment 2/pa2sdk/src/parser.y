@@ -72,9 +72,11 @@ decls1:
       |globalDec
 
 globalDec:
-       VAR argDec ';'
-       |TYPE argDec ';'
+       VAR argDec decEnd ';'
+       |TYPE argDec decEnd';'
        |func 
+
+
 
 func:
       FUNCTION ID '(' funcArgList ')' returnType '{' localDecls statementList '}'
@@ -86,7 +88,35 @@ returnType:
 statement:
       exp ';'
       |RETURN returning ';' 
-      |assignment ';'
+      |statementAssignment ';'
+      |IF '(' exp ')' '{' statementList '}' elseChunk
+      |WHILE '(' exp ')' '{' statementList '}'
+      |FOR '(' assignment TO exp ')' '{' statementList '}'
+
+statementAssignment:
+      leftAssignment '=' exp
+
+leftAssignment:
+      ID
+      |structFieldLookUp
+      |arraySubscript
+
+arraySubscript:
+      lArraySub '[' exp ']'
+
+lArraySub:
+      ID
+      |commaSepArray
+      |callingFunc
+      |arraySubscript
+      |structFieldLookUp
+
+commaSepArray:
+      '[' paramList ']' 
+
+elseChunk:
+      ELSE '{' statementList '}'
+      |
 
 returning:
       '(' exp ')' 
@@ -102,6 +132,16 @@ statementList1:
 
 argDec:
       ID ':' type
+
+
+structFieldLookUp:
+      lStructLookUp '.' ID
+
+lStructLookUp:
+      callingFunc
+      |structureLiteral
+      |arraySubscript
+      |structFieldLookUp
 
 funcArgList:
       funcArgList1
@@ -164,7 +204,6 @@ structureLiteral:
       '{' assignList '}'
 
 exp: 
-     //lValue
      INT
      |ID
      |NUM           //{$$ = yylval.val;}
@@ -174,6 +213,7 @@ exp:
      |FALSE         //{$$ = FALSE}
      |callingFunc
      |structureLiteral
+     |'(' exp ')'
      |'+' exp %prec UPLUS
      |'-' exp %prec UMINUS
      |'!' exp  
