@@ -62,7 +62,7 @@ program:
       decls 
       | EVAL '(' exp ')' ';'
 
-//Declatations
+//Declarations
 decls:
       decls1
       |
@@ -72,12 +72,9 @@ decls1:
       |globalDec
 
 globalDec:
-       VAR decMiddle 
-       |TYPE decMiddle
+       VAR argDec ';'
+       |TYPE argDec ';'
        |func 
-
-decMiddle:
-      ID ':' exp ';'
 
 func:
       FUNCTION ID '(' funcArgList ')' returnType '{' localDecls statementList '}'
@@ -119,6 +116,7 @@ type:
       |BOOL
       |'[' type ']'
       |ID
+      |structureType
       //fill in more possible stuct
 
 callingFunc:
@@ -151,6 +149,19 @@ decEnd:
 assignment:
       ID '=' exp
 
+assignList:
+      assignList1
+      |
+
+assignList1:
+      assignment
+      |assignList1 ',' assignment
+
+structureType:
+      '{' funcArgList '}'
+
+structureLiteral:
+      '{' assignList '}'
 
 exp: 
      //lValue
@@ -162,8 +173,9 @@ exp:
      |TRUE          //{$$ = TRUE}
      |FALSE         //{$$ = FALSE}
      |callingFunc
-     |'+' exp
-     |'-' exp
+     |structureLiteral
+     |'+' exp %prec UPLUS
+     |'-' exp %prec UMINUS
      |'!' exp  
      |exp '+' exp    //{$$ = $1 + $2;}
      |exp '-' exp    //{$$ = $1 - $2;}
@@ -178,13 +190,6 @@ exp:
      |exp '<' exp    //{$$ = $1 < $3 ? TRUE : FALSE ;}
      |exp '&' exp    //{$$ = ($1 == TRUE) && ($3 == TRUE) ? TRUE : FALSE ;}
      |exp '|' exp    //{$$ = ($1 == TRUE) || ($3 == TRUE) ? TRUE : FALSE ;}
-
-/*lValue:
-      ID
-      |lValue '.' ID
-      |lValue '[' exp ']'*/
- 
-
      
 %%
 
