@@ -65,39 +65,48 @@ program:
 //Declatations
 decls:
       decls1
-      |func
       |
 
 decls1:
-      globalDec decls
+      decls1 globalDec
+      |globalDec
 
 globalDec:
        VAR decMiddle 
-       |TYPE decMiddle 
+       |TYPE decMiddle
+       |func 
 
 decMiddle:
       ID ':' exp ';'
 
 func:
-      FUNCTION ID funcMiddle decls
+      FUNCTION ID '(' funcArgList ')' returnType '{' localDecls statementList '}'
 
-funcMiddle:
-      '(' funcArgList ')' funcEnd
-      |'(' ')' funcEnd
+returnType:
+        ':' type 
+        |
 
-funcEnd:
-        ':' type '{' localDec exp '}'
-        |'{' localDec exp '}'
-        |'{' localDec '}'
+statement:
+      |RETURN returning';' 
 
+statementList:
+      statementList1
+      |
 
+statementList1:
+      statement
+      |statementList1 statement 
+
+argDec:
+      ID ':' type
 
 funcArgList:
-      ID ':' type funcArgList1
+      funcArgList1
+      |
 
 funcArgList1:
-      ',' funcArgList
-      |
+      argDec
+      |funcArgList1 ',' argDec
 
 type:
       INT
@@ -122,16 +131,21 @@ paramList1:
       ',' paramList
       |
 
+localDecls:
+      localDecls1
+      |
+
+localDecls1:
+      localDec
+      |localDecls1 ";" localDec
+
 localDec:
        VAR localDecMiddle 
        |TYPE localDecMiddle
        | 
 
 localDecMiddle:
-      ID ':' exp localDecEnd
-
-localDecEnd:
-      |';' localDec
+      ID ':' exp ';'
 
 assignment:
       ID '=' exp ';'
@@ -156,8 +170,7 @@ exp:
      //|'[' arglist ']'
      //|'{' decls1 '}'
      |'{' fieldExpList '}'
-     |'(' expList ')'  
-     |RETURN returning';'   
+     |'(' expList ')'    
      |exp '=' exp
      |exp '+' exp    //{$$ = $1 + $2;}
      |exp '-' exp    //{$$ = $1 - $2;}
