@@ -4,9 +4,9 @@ function main (argv : [[int]]) : int {
       var x : int;
       var y : int;
 
-      /*if (x > y | y <= x) {
+      if (x > y | y <= x) {
             return (3);
-      }*/
+      }
 
       return ((x + y) * 3 / x % 11) ;
 }
