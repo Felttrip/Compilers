@@ -63,24 +63,28 @@ int main(int argc, char** argv) {
  	functionList *curr = list;
  	while(curr!=NULL)
  	{
- 		printf("Function %s:\n",list->name);
- 		if(list->arityMatch==1)
+ 		printf("Function %s:\n",curr->name);
+ 		if(curr->arityMatch==1)
  		{
- 			printf("\tArity: mismatch!\n");
+ 			printf("   Arity: mismatch!\n");
  		}
  		else
  		{
- 			printf("  Arity: %d\n",list->arity);
+ 			printf("   Arity: %d\n",curr->arity);
  		}
- 		if(list->defined==1)
+ 		if(curr->defined==1)
  		{
- 			printf("  Defined: no\n");
+ 			printf("   Defined: no\n");
+ 		}
+ 		else if(curr->defined==3)
+ 		{
+ 			printf("   Multiple definitions!\n");
  		}
  		else
  		{
- 			printf("  Defined: yes\n");
+ 			printf("   Defined: yes\n");
  		}
- 		printf("  Calls: %d\n",list->calls);
+ 		printf("   Calls: %d\n",curr->calls);
  		curr = curr->next;
  	}
 

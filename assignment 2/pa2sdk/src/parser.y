@@ -27,7 +27,6 @@ void defineFunction(functionList **list, char *name, int arity )
 {
 
   //if function list is empty
-  printf("list = %p\n",*list);
   if(*list == NULL)
   {
     *list = malloc(sizeof(functionList));
@@ -42,14 +41,13 @@ void defineFunction(functionList **list, char *name, int arity )
   //if function list exists
   else
   {
-    printf("enter the else\n");
     //look for function deff
     functionList *curr = *list;
     while(curr!=NULL)
     {
       if(strcmp((curr)->name,name)==0)
       {
-        //do nothing
+        curr->defined = 3;
       }
       //add to end of list
       else if((curr)->next == NULL)
@@ -322,7 +320,7 @@ exp:
      |STR
      |TRUE                {$$ = TRUE;}
      |FALSE               {$$ = FALSE;}
-     |callingFunc         {$$=0; setReturn(type,returnval,0,2);}
+     |callingFunc         {$$=$$; setReturn(type,returnval,0,2);}
      |structureLiteral    {$$=0; setReturn(type,returnval,0,2);}
      |structFieldLookUp   {$$=0; setReturn(type,returnval,0,2);}
      |arraySubscript      {$$=0; setReturn(type,returnval,0,2);}
