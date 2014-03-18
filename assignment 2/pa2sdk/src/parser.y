@@ -254,7 +254,7 @@ lStructLookUp:
 
 funcArgList:
       funcArgList1
-      |                        {$$ = $$;}
+      |                        {$$ = 0;}
 
 funcArgList1:
       argDec                   {$$ = 1;}
@@ -273,7 +273,7 @@ callingFunc:
 
 paramList:
       paramList1
-      |                   {$$ = $$;}
+      |                   {$$ = 0;}
 
 paramList1:
       exp                 {$$ = 1;}
@@ -313,18 +313,18 @@ structureLiteral:
       '{' assignList '}'
 
 exp: 
-     INT
+     INT                  {setReturn(type,returnval,0,2);}
      |ID                  {$$ = 0;}
      |NUM                 {$$ = $1;}
-     |NIL
-     |STR
+     |NIL                 {setReturn(type,returnval,0,2);}
+     |STR                 {setReturn(type,returnval,0,2);}
      |TRUE                {$$ = TRUE;}
      |FALSE               {$$ = FALSE;}
-     |callingFunc         {$$=$$; setReturn(type,returnval,0,2);}
-     |structureLiteral    {$$=0; setReturn(type,returnval,0,2);}
-     |structFieldLookUp   {$$=0; setReturn(type,returnval,0,2);}
-     |arraySubscript      {$$=0; setReturn(type,returnval,0,2);}
-     |commaSepArray       {$$=0; setReturn(type,returnval,0,2);}
+     |callingFunc         {setReturn(type,returnval,0,2);}
+     |structureLiteral    {setReturn(type,returnval,0,2);}
+     |structFieldLookUp   {setReturn(type,returnval,0,2);}
+     |arraySubscript      {setReturn(type,returnval,0,2);}
+     |commaSepArray       {setReturn(type,returnval,0,2);}
      |'(' exp ')'         {$$ = $2;}
      |'+' exp %prec UPLUS {$$ = $2;}
      |'-' exp %prec UMINUS{$$ = (0-$2);}

@@ -59,35 +59,36 @@ int main(int argc, char** argv) {
  			printf("Result: %d\n",returnval);
  		}
  	}
-
- 	functionList *curr = list;
- 	while(curr!=NULL)
- 	{
- 		printf("Function %s:\n",curr->name);
- 		if(curr->arityMatch==1)
+    else
+    {
+ 		functionList *curr = list;
+ 		while(curr!=NULL)
  		{
- 			printf("   Arity: mismatch!\n");
+ 			printf("Function %s:\n",curr->name);
+ 			if(curr->arityMatch==1)
+ 			{
+ 				printf("   Arity: mismatch!\n");
+ 			}
+ 			else
+ 			{
+ 				printf("   Arity: %d\n",curr->arity);
+ 			}
+ 			if(curr->defined==1)
+ 			{
+ 				printf("   Defined: no\n");
+ 			}
+ 			else if(curr->defined==3)
+ 			{
+ 				printf("   Multiple definitions!\n");
+ 			}
+ 			else
+ 			{
+ 				printf("   Defined: yes\n");
+ 			}
+ 			printf("   Calls: %d\n",curr->calls);
+ 			curr = curr->next;
  		}
- 		else
- 		{
- 			printf("   Arity: %d\n",curr->arity);
- 		}
- 		if(curr->defined==1)
- 		{
- 			printf("   Defined: no\n");
- 		}
- 		else if(curr->defined==3)
- 		{
- 			printf("   Multiple definitions!\n");
- 		}
- 		else
- 		{
- 			printf("   Defined: yes\n");
- 		}
- 		printf("   Calls: %d\n",curr->calls);
- 		curr = curr->next;
  	}
-
 	
  }
 return 0;
