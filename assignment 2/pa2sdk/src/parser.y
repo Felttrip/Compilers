@@ -13,7 +13,7 @@
 
 
 extern int yylex(void);
-static void yyerror( int *returnval, int *type, int *mode, functionList *list, const char* p);
+static void yyerror( int *returnval, int *type, int *mode, functionList **list, const char* p);
 extern char* undef;
 
 void setReturn(int *type, int *returnval, int value, int localType)
@@ -23,45 +23,103 @@ void setReturn(int *type, int *returnval, int value, int localType)
   *returnval = value;
 }
 
-void defineFunction(functionList *list, char *name, int arity )
+void defineFunction(functionList **list, char *name, int arity )
 {
+
   //if function list is empty
-  if(list == NULL)
+  if(*list == NULL)
   {
-    list = malloc(sizeof(functionList));
-    list->name = strdup(name);
-    list->arity = arity;
-    list->defined = 1;
+    *list = malloc(sizeof(functionList));
+    (*list)->name = strdup(name);
+    (*list)->arity = arity;
+    (*list)->defined = 0;
+    (*list)->arityMatch = 0;
+    (*list)->calls = 0;
+    (*list)->next = NULL;
+
   }
   //if function list exists
   else
   {
     //look for function deff
-    functionList *curr = list;
-    while(curr!=NULL)
+    functionList **curr = list;
+    while(*curr!=NULL)
     {
-      if(strcmp(curr->name,name)==0)
+      if(strcmp((*curr)->name,name)==0)
       {
         //do nothing
       }
       //add to end of list
-      else if(curr->next == NULL)
+      else if((*curr)->next == NULL)
       {
-        curr->next = malloc(sizeof(functionList));
-        curr=curr->next;
-        strcpy(curr->name,name);
-        curr->arity = arity;
-        curr->arityMatch = 0;
-        curr->calls = 0;
-        curr->next = NULL;
+        (*curr)->next = malloc(sizeof(functionList));
+        (*curr)=(*curr)->next;
+        (*curr)->name=strdup(name);
+        (*curr)->arity = arity;
+        (*curr)->arityMatch = 0;
+        (*curr)->defined = 0;
+        (*curr)->calls = 0;
+        (*curr)->next = NULL;
       }
-      curr = curr->next; 
+      (*curr) = (*curr)->next; 
     }
+
 
   }
   
 }
 
+void functionCallCheck(functionList **list, char* name, int arity)
+{
+  //find function
+  //if function list is empty
+  if(*list == NULL)
+  {
+
+    *list = malloc(sizeof(functionList));
+    (*list)->name = strdup(name);
+    (*list)->arity = arity;
+    (*list)->arityMatch = 0;
+    (*list)->defined = 1;
+    (*list)->calls = 1;
+    (*list)->next = NULL;
+
+  }
+  //if function list exists
+  else
+  {
+    //look for function
+    functionList **curr = list;
+    while(*curr!=NULL)
+    {
+      //if onlist
+      if(strcmp((*curr)->name,name)==0)
+      {
+        (*curr)->calls++;
+        (*curr)->defined = 0;
+        if(arity!=(*curr)->arity)
+        {
+          (*curr)->arity = 1;
+        }
+      }
+      //add to end of list if undefined
+      else if((*curr)->next == NULL)
+      {
+        (*curr)->next = malloc(sizeof(functionList));
+        (*curr)=(*curr)->next;
+        (*curr)->name=strdup(name);
+        (*curr)->arity = arity;
+        (*curr)->arityMatch = 0;
+        (*curr)->defined = 1;
+        (*curr)->calls = 1;
+        (*curr)->next = NULL;
+      }
+      *curr = (*curr)->next; 
+    }
+
+  }
+
+}
 
 %}
 // These get stuck in a token enum in the header bison generates (parser.h),
@@ -82,7 +140,7 @@ void defineFunction(functionList *list, char *name, int arity )
 %token NOT_EQ "!="
 
 //values sent to yyparse() they are pointers so we can change them later to returnvalues from yyparse()
-%parse-param {int *returnval} {int *type} {int *mode} {functionList *list}
+%parse-param {int *returnval} {int *type} {int *mode} {functionList **list}
 
 // The type of yylval.
 %union {
@@ -93,7 +151,8 @@ void defineFunction(functionList *list, char *name, int arity )
 
 
 //Type
-%type <val> NUM INT exp NIL STR TRUE FALSE ID
+%type <val> NUM INT exp NIL STR TRUE FALSE funcArgList1 funcArgList paramList paramList1
+%type <strVal> ID 
 
 %left '|'
 %left '&'
@@ -130,7 +189,7 @@ globalDec:
 
 
 func:
-      FUNCTION ID '(' funcArgList ')' returnType '{' localDecls statementList '}' {defineFunction(list,yylval.strVal,0);} 
+      FUNCTION ID '(' funcArgList ')' returnType '{'  localDecls statementList '}' { defineFunction(list,$2,$4);} 
 
 returnType:
       ':' type 
@@ -197,11 +256,11 @@ lStructLookUp:
 
 funcArgList:
       funcArgList1
-      |
+      |                        {$$ = $$;}
 
 funcArgList1:
-      argDec
-      |funcArgList1 ',' argDec
+      argDec                   {$$ = 1;}
+      |funcArgList1 ',' argDec {$$ = $1 + 1;}
 
 type:
       INT
@@ -212,15 +271,15 @@ type:
       //fill in more possible stuct
 
 callingFunc:
-      ID '(' paramList ')'
+      ID '(' paramList ')' {functionCallCheck(list,$1,$3);}
 
 paramList:
       paramList1
-      |
+      |                   {$$ = $$;}
 
 paramList1:
-      exp
-      |paramList1 ',' exp
+      exp                 {$$ = 1;}
+      |paramList1 ',' exp {$$ = $1 + 1;}
 
 
 localDecls:
@@ -257,8 +316,8 @@ structureLiteral:
 
 exp: 
      INT
-     |ID        
-     |NUM                 {$$ = yylval.val;}
+     |ID                  {$$ = 0;}
+     |NUM                 {$$ = $1;}
      |NIL
      |STR
      |TRUE                {$$ = TRUE;}
@@ -289,7 +348,7 @@ exp:
 %%
 
 
-void yyerror( int *returnval, int *type, int *mode, functionList *list, const char* p) {
+void yyerror( int *returnval, int *type, int *mode, functionList **list, const char* p) {
       fprintf(stderr, "%s\n", p);
 }
 

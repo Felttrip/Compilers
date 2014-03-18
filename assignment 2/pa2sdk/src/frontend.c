@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
  //mode of program 0 for eval 1 for decls
  int mode = 0;
  //yyparse() returns 0 if successfull
- if(yyparse(&returnval,&type,&mode,list))
+ if(yyparse(&returnval,&type,&mode,&list))
  {
  	printf("Genuine Liger: no\n");
  }
@@ -59,7 +59,30 @@ int main(int argc, char** argv) {
  			printf("Result: %d\n",returnval);
  		}
  	}
- 	printf("%s",list->name);
+
+ 	functionList *curr = list;
+ 	while(curr!=NULL)
+ 	{
+ 		printf("Function %s:\n",list->name);
+ 		if(list->arityMatch==1)
+ 		{
+ 			printf("\tArity: mismatch!\n");
+ 		}
+ 		else
+ 		{
+ 			printf("  Arity: %d\n",list->arity);
+ 		}
+ 		if(list->defined==1)
+ 		{
+ 			printf("  Defined: no\n");
+ 		}
+ 		else
+ 		{
+ 			printf("  Defined: yes\n");
+ 		}
+ 		printf("  Calls: %d\n",list->calls);
+ 		curr = curr->next;
+ 	}
 
 	
  }
