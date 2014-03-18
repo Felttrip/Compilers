@@ -27,6 +27,7 @@ void defineFunction(functionList **list, char *name, int arity )
 {
 
   //if function list is empty
+  printf("list = %p\n",*list);
   if(*list == NULL)
   {
     *list = malloc(sizeof(functionList));
@@ -41,30 +42,29 @@ void defineFunction(functionList **list, char *name, int arity )
   //if function list exists
   else
   {
+    printf("enter the else\n");
     //look for function deff
-    functionList **curr = list;
-    while(*curr!=NULL)
+    functionList *curr = *list;
+    while(curr!=NULL)
     {
-      if(strcmp((*curr)->name,name)==0)
+      if(strcmp((curr)->name,name)==0)
       {
         //do nothing
       }
       //add to end of list
-      else if((*curr)->next == NULL)
+      else if((curr)->next == NULL)
       {
-        (*curr)->next = malloc(sizeof(functionList));
-        (*curr)=(*curr)->next;
-        (*curr)->name=strdup(name);
-        (*curr)->arity = arity;
-        (*curr)->arityMatch = 0;
-        (*curr)->defined = 0;
-        (*curr)->calls = 0;
-        (*curr)->next = NULL;
+        (curr)->next = malloc(sizeof(functionList));
+        (curr)=(curr)->next;
+        (curr)->name=strdup(name);
+        (curr)->arity = arity;
+        (curr)->arityMatch = 0;
+        (curr)->defined = 0;
+        (curr)->calls = 0;
+        (curr)->next = NULL;
       }
-      (*curr) = (*curr)->next; 
+      (curr) = (curr)->next; 
     }
-
-
   }
   
 }
@@ -89,32 +89,32 @@ void functionCallCheck(functionList **list, char* name, int arity)
   else
   {
     //look for function
-    functionList **curr = list;
-    while(*curr!=NULL)
+    functionList *curr = *list;
+    while(curr!=NULL)
     {
       //if onlist
-      if(strcmp((*curr)->name,name)==0)
+      if(strcmp((curr)->name,name)==0)
       {
-        (*curr)->calls++;
-        (*curr)->defined = 0;
-        if(arity!=(*curr)->arity)
+        (curr)->calls++;
+        (curr)->defined = 0;
+        if(arity!=(curr)->arity)
         {
-          (*curr)->arity = 1;
+          (curr)->arity = 1;
         }
       }
       //add to end of list if undefined
-      else if((*curr)->next == NULL)
+      else if((curr)->next == NULL)
       {
-        (*curr)->next = malloc(sizeof(functionList));
-        (*curr)=(*curr)->next;
-        (*curr)->name=strdup(name);
-        (*curr)->arity = arity;
-        (*curr)->arityMatch = 0;
-        (*curr)->defined = 1;
-        (*curr)->calls = 1;
-        (*curr)->next = NULL;
+        (curr)->next = malloc(sizeof(functionList));
+        (curr)=(curr)->next;
+        (curr)->name=strdup(name);
+        (curr)->arity = arity;
+        (curr)->arityMatch = 0;
+        (curr)->defined = 1;
+        (curr)->calls = 1;
+        (curr)->next = NULL;
       }
-      *curr = (*curr)->next; 
+      curr = (curr)->next; 
     }
 
   }
